@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Connect with the E# community, join events, and collaborate with maintainers across the globe.">
+  <title>E# Community · Events, collaborations, and contributor hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="community">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo">
+          <img src="assets/logo.svg" alt="E# logo">
+        </span>
+        <span>E# Platform</span>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="primary-navigation" aria-label="Toggle navigation">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 5H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M3 15H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span aria-hidden="true">Menu</span>
+      </button>
+      <nav class="site-nav" id="primary-navigation" data-nav aria-label="Primary navigation">
+        <a href="index.html" data-nav-link data-target="index">Overview</a>
+        <a href="docs.html" data-nav-link data-target="docs">Documentation</a>
+        <a href="download.html" data-nav-link data-target="download">Download</a>
+        <a href="community.html" data-nav-link data-target="community">Community</a>
+        <a class="primary-action" href="../index.html">AetherStudio Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="section hero">
+        <div class="hero-copy">
+          <span class="badge">Community</span>
+          <h1>Build the future of E# together.</h1>
+          <p class="lead">From weekly office hours to contributor summits, the E# community is a global network of engineers, educators, and operators sharing knowledge and shaping the roadmap.</p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#events">Upcoming events</a>
+            <a class="secondary-action" href="#foundations">Join a working group</a>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <strong>18k+</strong>
+              <span>Members across 42 countries</span>
+            </div>
+            <div class="stat">
+              <strong>350</strong>
+              <span>Active contributors</span>
+            </div>
+            <div class="stat">
+              <strong>24/7</strong>
+              <span>Real-time support coverage</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-preview">
+          <div class="hero-signal" aria-hidden="true"></div>
+          <h3>Contributor pledge</h3>
+          <p>Our pledge keeps collaboration respectful, inclusive, and transparent. Every participant agrees to the code of conduct.</p>
+          <div class="code-card">
+            <header>
+              <span>CODE_OF_CONDUCT.md</span>
+              <span>Excerpt</span>
+            </header>
+            <pre><code class="language-markdown">## Our Standards
+
+- Empathy, respect, and patience in all channels.
+- Constructive feedback rooted in shared context.
+- Accountability for decisions that affect the community.
+
+We encourage reporting concerns to conduct@e-sharp.dev.</code></pre>
+          </div>
+          <div class="quick-links" style="margin-top: var(--spacing-4);">
+            <a href="#slack">Join the Slack workspace</a>
+            <a href="#mentorship">Mentorship program</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="events">
+        <h2 class="section-title">Upcoming events</h2>
+        <p class="section-subtitle">Sessions are streamed live with recordings published within 24 hours. RSVP to receive reminders and resource bundles.</p>
+        <div class="grid cols-3">
+          <article class="card" id="runtime-deep-dive">
+            <span class="badge" aria-hidden="true">Live</span>
+            <h3>Runtime Deep Dive</h3>
+            <p>Walkthrough of the upcoming deterministic scheduler and telemetry pipeline.</p>
+            <div class="quick-links">
+              <a href="#runtime-deep-dive">Reserve a seat</a>
+            </div>
+          </article>
+          <article class="card" id="contracts-clinic">
+            <span class="badge" aria-hidden="true">Workshop</span>
+            <h3>Contracts Clinic</h3>
+            <p>Learn to formalize APIs with compile-time contracts and enforce organizational policies.</p>
+            <div class="quick-links">
+              <a href="#contracts-clinic">Register</a>
+            </div>
+          </article>
+          <article class="card" id="contributor-day">
+            <span class="badge" aria-hidden="true">Summit</span>
+            <h3>Global Contributor Day</h3>
+            <p>Collaborate on issue triage, pair programming, and roadmap discussions with maintainers.</p>
+            <div class="quick-links">
+              <a href="#contributor-day">Submit a talk</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="foundations">
+        <div class="panel">
+          <h2 class="section-title">Working groups</h2>
+          <p class="section-subtitle">Join a focused track that aligns with your interests and expertise. Each group maintains public notes and async updates.</p>
+          <div class="grid cols-3">
+            <article class="card" id="wg-language">
+              <h3>Language evolution</h3>
+              <p>Design proposals, syntax improvements, and compiler ergonomics. Meets bi-weekly.</p>
+              <div class="quick-links">
+                <a href="#wg-language">Read meeting notes</a>
+              </div>
+            </article>
+            <article class="card" id="wg-runtime">
+              <h3>Runtime &amp; observability</h3>
+              <p>Scheduler optimizations, telemetry, and production readiness checklists.</p>
+              <div class="quick-links">
+                <a href="#wg-runtime">Join the runtime channel</a>
+              </div>
+            </article>
+            <article class="card" id="wg-learning">
+              <h3>Learning &amp; advocacy</h3>
+              <p>Educational content, community workshops, and onboarding materials.</p>
+              <div class="quick-links">
+                <a href="#wg-learning">Volunteer as a mentor</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="slack">
+        <h2 class="section-title">Stay connected</h2>
+        <p class="section-subtitle">Jump into real-time chats, asynchronous forums, and curated newsletters. Choose the channel that suits your workflow.</p>
+        <div class="grid cols-2">
+          <article class="card" id="slack-workspace-card">
+            <h3>Slack workspace</h3>
+            <p>Topic-based channels, release alerts, and weekly office hours direct from maintainers.</p>
+            <div class="quick-links">
+              <a href="#slack-workspace-card">Request an invite</a>
+              <a href="#slack-workspace-card">Browse channel directory</a>
+            </div>
+          </article>
+          <article class="card" id="community-forum">
+            <h3>Forum &amp; RFC tracker</h3>
+            <p>Asynchronous discussions with structured RFC templates and searchable archives.</p>
+            <div class="quick-links">
+              <a href="#community-forum">Visit the forum</a>
+              <a href="#community-forum">Track RFCs</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="mentorship">
+        <div class="panel">
+          <h2 class="section-title">Mentorship program</h2>
+          <p class="section-subtitle">Pair with experienced maintainers for twelve weeks of guided collaboration. Participants contribute to real initiatives and receive feedback on design docs and implementation details.</p>
+          <div class="code-card">
+            <header>
+              <span>Mentorship application</span>
+              <span>Template</span>
+            </header>
+            <pre><code class="language-markdown">### Background
+Share relevant experience and what you hope to learn.
+
+### Focus area
+Pick the subsystem or working group you're most excited about.
+
+### Availability
+List the number of hours per week and preferred time zones.</code></pre>
+          </div>
+          <div class="quick-links" style="margin-top: var(--spacing-4);" id="mentorship-links">
+            <a href="#mentorship">Apply now</a>
+            <a href="#mentorship">Meet past mentors</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="list-inline">
+        <a class="brand" href="index.html">
+          <span class="brand-logo">
+            <img src="assets/logo.svg" alt="E# logo">
+          </span>
+          <span>E# Platform</span>
+        </a>
+        <a href="docs.html">Documentation</a>
+        <a href="download.html">Download</a>
+        <a href="community.html">Community</a>
+        <a href="../index.html">Back to AetherStudio</a>
+      </div>
+      <div class="footer-meta">
+        <span>&copy; <span id="footer-year">2024</span> AetherStudio. All rights reserved.</span>
+        <span>We stand for inclusive, respectful collaboration.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById("footer-year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
