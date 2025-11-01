@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AetherStudio社区 - 参与E#语言和其他项目的开发，了解贡献指南、开发路线图，以及如何加入我们的社区">
+    <title>社区 - AetherStudio</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.prod.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 100%);
+            transition: background 0.5s ease;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+            transition: background 0.5s ease;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            padding: 0.8rem 2.5rem;
+            backdrop-filter: blur(25px);
+            background: rgba(10, 10, 10, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s ease;
+            max-width: 900px;
+            width: 90%;
+        }
+
+        .navbar.scrolled {
+            backdrop-filter: blur(30px);
+            background: rgba(10, 10, 10, 0.2);
+            padding: 0.6rem 1.5rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: none;
+            margin: 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            transition: all 0.5s ease;
+            margin-right: auto;
+            white-space: nowrap;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .logo:hover {
+            color: #ffffff;
+            transform: scale(1.05);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            margin-left: auto;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.5s ease;
+            position: relative;
+            padding: 0.4rem 0.8rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin: 0 0.1rem;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(100, 150, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease, transform 0.6s ease;
+            backdrop-filter: blur(10px);
+            margin-left: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(100, 150, 255, 0.2);
+        }
+
+        .theme-icon {
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
+            stroke: #ffffff;
+        }
+
+        .theme-toggle.rotating {
+            animation: rotate 0.6s ease-in-out;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .main-content {
+            margin-top: 120px;
+            padding: 0 2rem 4rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+        }
+
+        .page-subtitle {
+            font-size: 1.3rem;
+            color: #b0b0b0;
+            max-width: 700px;
+            margin: 0 auto;
+            transition: color 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 0.2s;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: color 0.5s ease;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            transition: color 0.5s ease;
+        }
+
+        .card-content {
+            color: #b0b0b0;
+            line-height: 1.8;
+            transition: color 0.5s ease;
+        }
+
+        .card-content p {
+            margin-bottom: 1rem;
+        }
+
+        .card-content ul,
+        .card-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-content li {
+            margin-bottom: 0.5rem;
+            color: #b0b0b0;
+            transition: color 0.5s ease;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.9rem 1.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            margin-top: 1rem;
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(100, 150, 255, 0.3);
+        }
+
+        .cta-button::after {
+            content: '→';
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover::after {
+            transform: translateX(3px);
+        }
+
+        .roadmap-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+        }
+
+        .roadmap-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+        }
+
+        .roadmap-item.completed::before {
+            background: #4caf50;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+        }
+
+        .roadmap-item.in-progress::before {
+            background: #2196f3;
+            box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
+        }
+
+        .roadmap-phase {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            transition: color 0.5s ease;
+        }
+
+        .roadmap-description {
+            color: #b0b0b0;
+            transition: color 0.5s ease;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .team-member {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .team-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .team-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            transition: color 0.5s ease;
+        }
+
+        .team-role {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            transition: color 0.5s ease;
+        }
+
+        .highlight-box {
+            background: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .success-box {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #4caf50;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .footer {
+            background: rgba(10, 10, 10, 0.5);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+
+        .footer-section h4 {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+            transition: color 0.5s ease;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #b0b0b0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.5s ease;
+            display: block;
+            padding: 0.2rem 0;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-text {
+            color: #888;
+            font-size: 0.9rem;
+            margin: 0;
+            transition: color 0.5s ease;
+        }
+
+        .footer-brand {
+            color: #ffffff;
+            font-weight: 600;
+            transition: color 0.5s ease;
+        }
+
+        body.light-theme {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        body.light-theme .background-canvas {
+            background: radial-gradient(ellipse at center, #f0f0f0 0%, #e0e0e0 100%);
+        }
+
+        body.light-theme .particle {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        body.light-theme .logo {
+            color: #333;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .nav-links a {
+            color: #555;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .nav-links a:hover {
+            color: #333;
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.15);
+        }
+
+        body.light-theme .theme-toggle {
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.15);
+            border-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .theme-icon {
+            stroke: #333;
+        }
+
+        body.light-theme .page-title,
+        body.light-theme .section-title,
+        body.light-theme .card-title,
+        body.light-theme .roadmap-phase,
+        body.light-theme .team-name,
+        body.light-theme .footer-section h4,
+        body.light-theme .footer-brand {
+            color: #333;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .page-subtitle,
+        body.light-theme .card-content,
+        body.light-theme .card-content li,
+        body.light-theme .roadmap-description,
+        body.light-theme .team-role {
+            color: #666;
+        }
+
+        body.light-theme .card,
+        body.light-theme .team-member {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .card:hover,
+        body.light-theme .team-member:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body.light-theme .cta-button {
+            color: #333;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .cta-button:hover {
+            background: rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme .footer {
+            background: rgba(255, 255, 255, 0.8);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .footer-links a {
+            color: #666;
+        }
+
+        body.light-theme .footer-links a:hover {
+            color: #333;
+        }
+
+        body.light-theme .footer-text {
+            color: #666;
+        }
+
+        body.light-theme .code-snippet {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .main-content {
+                padding: 0 1rem 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 1rem;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        body.light-theme::-webkit-scrollbar-track {
+            background: #e0e0e0;
+        }
+
+        body.light-theme::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="background-canvas"></div>
+        <div class="particles">
+            <div v-for="n in 50" :key="n" class="particle"
+                :style="{
+                    left: Math.random() * 100 + '%',
+                    animationDelay: Math.random() * 20 + 's',
+                    animationDuration: (15 + Math.random() * 10) + 's'
+                }">
+            </div>
+        </div>
+
+        <nav class="navbar" :class="{ scrolled: isScrolled }">
+            <div class="nav-container">
+                <a href="../index.html" class="logo">AetherStudio</a>
+                <ul class="nav-links">
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="../esdocs.html">E# 文档</a></li>
+                    <li><a href="community.html">社区</a></li>
+                </ul>
+                <button class="theme-toggle" @click="toggleTheme" :class="{ rotating: isRotating }" aria-label="切换主题">
+                    <svg v-if="!isDark" class="theme-icon sun-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <svg v-else class="theme-icon moon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="page-header">
+                <h1 class="page-title">加入我们的社区</h1>
+                <p class="page-subtitle">欢迎成为 AetherStudio 社区的一员。无论您是开发者、设计师还是热衷者，我们都欢迎您的参与和贡献。</p>
+            </header>
+
+            <section id="contribution" class="section">
+                <h2 class="section-title">
+                    <span class="section-icon" aria-hidden="true">🤝</span>
+                    <span>贡献指南</span>
+                </h2>
+                
+                <div class="card">
+                    <h3 class="card-title">如何为 E# 和其他项目做出贡献</h3>
+                    <div class="card-content">
+                        <p>我们欢迎各种形式的贡献，无论您是想提交代码、报告问题、改进文档还是分享想法。</p>
+                        
+                        <div class="highlight-box">
+                            <strong>贡献流程：</strong>
+                            <ol>
+                                <li><strong>Fork 仓库</strong> - 在 GitHub 上 fork 您想要贡献的项目</li>
+                                <li><strong>创建分支</strong> - 为您的功能或修复创建一个新分支</li>
+                                <li><strong>编写代码</strong> - 遵循我们的代码风格指南进行开发</li>
+                                <li><strong>测试代码</strong> - 确保您的更改不会破坏现有功能</li>
+                                <li><strong>提交 PR</strong> - 提交 Pull Request 并详细描述您的更改</li>
+                                <li><strong>代码审查</strong> - 我们的团队会审查您的代码并提供反馈</li>
+                            </ol>
+                        </div>
+
+                        <h4 style="color: #ffffff; margin-top: 1.5rem; margin-bottom: 0.5rem; transition: color 0.5s ease;">代码风格指南</h4>
+                        <ul>
+                            <li>使用清晰、描述性的变量和函数名</li>
+                            <li>为复杂的逻辑添加注释</li>
+                            <li>遵循项目现有的代码格式</li>
+                            <li>编写单元测试覆盖新功能</li>
+                            <li>保持 commit 消息简洁明了</li>
+                        </ul>
+
+                        <div class="success-box">
+                            <strong>首次贡献者：</strong> 我们标记了一些 "good first issue" 标签的问题，非常适合新贡献者入门。查看这些问题开始您的贡献之旅！
+                        </div>
+
+                        <a href="https://github.com/orgs/AetherStudioTeam/repositories" class="cta-button" target="_blank" rel="noopener noreferrer" aria-label="查看贡献指南">
+                            查看详细指南
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="repositories" class="section">
+                <h2 class="section-title">
+                    <span class="section-icon" aria-hidden="true">📦</span>
+                    <span>开源仓库</span>
+                </h2>
+                
+                <div class="card">
+                    <h3 class="card-title">GitHub 项目仓库</h3>
+                    <div class="card-content">
+                        <p>我们的所有项目都托管在 GitHub 上，欢迎浏览、star 和贡献：</p>
+                        
+                        <div class="highlight-box">
+                            <ul>
+                                <li><strong>E# 语言核心</strong> - E# 编译器和运行时实现<br>
+                                    <code class="code-snippet">https://github.com/AetherStudioTeam/esharp-core</code>
+                                </li>
+                                <li><strong>E# 标准库</strong> - E# 语言标准库和 API 文档<br>
+                                    <code class="code-snippet">https://github.com/AetherStudioTeam/esharp-stdlib</code>
+                                </li>
+                                <li><strong>LumenCode</strong> - 音乐游戏项目源代码<br>
+                                    <code class="code-snippet">https://github.com/AetherStudioTeam/lumencode</code>
+                                </li>
+                                <li><strong>VortaxV3</strong> - Minecraft 代理服务端 (Rust)<br>
+                                    <code class="code-snippet">https://github.com/AetherStudioTeam/vortaxv3</code>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>注意：</strong> 某些仓库可能仍在私有状态，正在准备首次公开发布。请关注我们的更新。
+                        </div>
+
+                        <a href="https://github.com/orgs/AetherStudioTeam/repositories" class="cta-button" target="_blank" rel="noopener noreferrer" aria-label="访问 GitHub 组织">
+                            访问 GitHub
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reporting" class="section">
+                <h2 class="section-title">
+                    <span class="section-icon" aria-hidden="true">🐛</span>
+                    <span>问题报告</span>
+                </h2>
+                
+                <div class="card">
+                    <h3 class="card-title">Bug 和安全问题报告</h3>
+                    <div class="card-content">
+                        <p>发现了问题？我们非常重视您的反馈。请根据问题类型选择合适的报告渠道：</p>
+                        
+                        <h4 style="color: #ffffff; margin-top: 1.5rem; margin-bottom: 0.5rem; transition: color 0.5s ease;">🐛 一般 Bug 报告</h4>
+                        <p>对于一般性的 bug 和功能请求，请在对应项目的 GitHub Issues 页面提交：</p>
+                        <ul>
+                            <li>清晰描述问题和复现步骤</li>
+                            <li>提供环境信息（操作系统、版本等）</li>
+                            <li>如果可能，提供最小可复现示例</li>
+                            <li>附上相关的错误日志或截图</li>
+                        </ul>
+                        <a href="https://github.com/orgs/AetherStudioTeam/repositories" class="cta-button" target="_blank" rel="noopener noreferrer" aria-label="报告 Bug">
+                            提交 Bug 报告
+                        </a>
+
+                        <h4 style="color: #ffffff; margin-top: 2rem; margin-bottom: 0.5rem; transition: color 0.5s ease;">🔒 安全漏洞报告</h4>
+                        <div class="warning-box">
+                            <strong>重要：</strong> 如果您发现了安全漏洞，请<strong>不要</strong>公开提交 Issue。请通过以下安全渠道联系我们：
+                            <ul style="margin-top: 1rem;">
+                                <li><strong>电子邮件：</strong> <code>security@aetherstudio.dev</code>（推荐）</li>
+                                <li><strong>加密通信：</strong> 使用我们的 PGP 公钥加密敏感信息</li>
+                                <li><strong>响应时间：</strong> 我们会在 48 小时内确认收到您的报告</li>
+                            </ul>
+                        </div>
+
+                        <h4 style="color: #ffffff; margin-top: 2rem; margin-bottom: 0.5rem; transition: color 0.5s ease;">💬 一般问题和讨论</h4>
+                        <p>对于使用问题、功能讨论或一般性咨询：</p>
+                        <ul>
+                            <li><strong>GitHub Discussions</strong> - 适合深入讨论和提问</li>
+                            <li><strong>QQ 群聊</strong> - 实时交流和快速解答</li>
+                            <li><strong>Discord 服务器</strong> - 国际社区交流（即将开放）</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="roadmap" class="section">
+                <h2 class="section-title">
+                    <span class="section-icon" aria-hidden="true">🗺️</span>
+                    <span>开发路线图</span>
+                </h2>
+                
+                <div class="card">
+                    <h3 class="card-title">E# 语言和 AetherStudio 项目规划</h3>
+                    <div class="card-content">
+                        <p>我们的发展方向清晰明确，以下是各项目的主要开发计划：</p>
+                        
+                        <div class="roadmap-timeline">
+                            <div class="roadmap-item completed">
+                                <div class="roadmap-phase">✅ 2023 Q4 - 基础架构</div>
+                                <div class="roadmap-description">
+                                    <ul>
+                                        <li>E# 语言核心设计和语法定义</li>
+                                        <li>基础编译器原型实现</li>
+                                        <li>初步标准库框架</li>
+                                        <li>LumenCode 初版发布</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="roadmap-item completed">
+                                <div class="roadmap-phase">✅ 2024 Q1-Q2 - 核心功能</div>
+                                <div class="roadmap-description">
+                                    <ul>
+                                        <li>完整的类型系统实现</li>
+                                        <li>泛型支持和类型推断</li>
+                                        <li>内存管理优化</li>
+                                        <li>VortaxV3 Rust 重写启动</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="roadmap-item in-progress">
+                                <div class="roadmap-phase">🔄 2024 Q3-Q4 - 生态建设（进行中）</div>
+                                <div class="roadmap-description">
+                                    <ul>
+                                        <li>E# 包管理器开发</li>
+                                        <li>IDE 插件和语言服务器</li>
+                                        <li>增强的错误诊断和调试工具</li>
+                                        <li>社区文档和教程完善</li>
+                                        <li>VortaxV3 性能优化和功能扩展</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="roadmap-item">
+                                <div class="roadmap-phase">📅 2025 Q1 - 稳定版本</div>
+                                <div class="roadmap-description">
+                                    <ul>
+                                        <li>E# 1.0 稳定版发布</li>
+                                        <li>完整的标准库和文档</li>
+                                        <li>跨平台支持（Windows、Linux、macOS）</li>
+                                        <li>性能基准测试和优化</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="roadmap-item">
+                                <div class="roadmap-phase">📅 2025 Q2+ - 高级特性</div>
+                                <div class="roadmap-description">
+                                    <ul>
+                                        <li>异步编程支持</li>
+                                        <li>并发和并行计算优化</li>
+                                        <li>WASM 编译目标</li>
+                                        <li>元编程和宏系统</li>
+                                        <li>与其他语言的互操作性</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="highlight-box" style="margin-top: 2rem;">
+                            <strong>社区影响：</strong> 路线图会根据社区反馈和需求进行调整。您的声音对我们很重要！请在 GitHub Discussions 中分享您的想法和建议。
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="participation" class="section">
+                <h2 class="section-title">
+                    <span class="section-icon" aria-hidden="true">🌐</span>
+                    <span>社区参与</span>
+                </h2>
+                
+                <div class="card">
+                    <h3 class="card-title">加入我们的交流平台</h3>
+                    <div class="card-content">
+                        <p>我们提供多种方式让您与社区成员和团队互动：</p>
+                        
+                        <h4 style="color: #ffffff; margin-top: 1.5rem; margin-bottom: 0.5rem; transition: color 0.5s ease;">💬 在线论坛和聊天</h4>
+                        <ul>
+                            <li><strong>GitHub Discussions</strong> - 技术讨论、功能建议和问题解答
+                                <br><a href="https://github.com/orgs/AetherStudioTeam/discussions" class="cta-button" target="_blank" rel="noopener noreferrer" aria-label="加入讨论">参与讨论</a>
+                            </li>
+                            <li><strong>QQ 群聊</strong> - 中文社区实时交流（群号：E7joU1opFu）
+                                <br><a href="https://qm.qq.com/q/E7joU1opFu" class="cta-button" target="_blank" rel="noopener noreferrer" aria-label="加入 QQ 群">加入 QQ 群</a>
+                            </li>
+                            <li><strong>Discord 服务器</strong> - 国际开发者社区（即将开放）
+                                <br><span style="color: #888;">敬请期待...</span>
+                            </li>
+                        </ul>
+
+                        <h4 style="color: #ffffff; margin-top: 2rem; margin-bottom: 0.5rem; transition: color 0.5s ease;">📚 学习资源</h4>
+                        <ul>
+                            <li><strong>官方文档</strong> - E# 完整语言文档和 API 参考</li>
+                            <li><strong>教程和示例</strong> - 从入门到高级的学习路径</li>
+                            <li><strong>博客文章</strong> - 团队分享的技术洞察和更新</li>
+                            <li><strong>视频教程</strong> - B站和 YouTube 频道（筹备中）</li>
+                        </ul>
+
+                        <h4 style="color: #ffffff; margin-top: 2rem; margin-bottom: 0.5rem; transition: color 0.5s ease;">🎉 活动和聚会</h4>
+                        <div class="highlight-box">
+                            <p>我们计划举办以下活动：</p>
+                            <ul>
+                                <li><strong>在线研讨会</strong> - 定期的技术分享和 Q&A 会议</li>
+                                <li><strong>Hackathon</strong> - 社区编程马拉松活动</li>
+                                <li><strong>线下聚会</strong> - 主要城市的开发者见面会（筹划中）</li>
+                                <li><strong>年度大会</strong> - AetherStudio 社区年度盛会（2025 计划）</li>
+                            </ul>
+                        </div>
+
+                        <h4 style="color: #ffffff; margin-top: 2rem; margin-bottom: 0.5rem; transition: color 0.5s ease;">🎁 社区福利</h4>
+                        <ul>
+                            <li>活跃贡献者认证徽章</li>
+                            <li>优先访问 beta 版本和新功能</li>
+                            <li>专属社区周边（即将推出）</li>
+                            <li>年度贡献者表彰</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="team" class="section">
+                <h2 class="section-title">
+                    <span class="section-icon" aria-hidden="true">👥</span>
+                    <span>团队介绍</span>
+                </h2>
+                
+                <div class="card">
+                    <h3 class="card-title">AetherStudio 核心团队</h3>
+                    <div class="card-content">
+                        <p>我们是一群充满热情的开发者，致力于创造优质的开源软件和工具。</p>
+                        
+                        <div class="team-grid">
+                            <div class="team-member">
+                                <div class="team-avatar" aria-hidden="true">🚀</div>
+                                <div class="team-name">核心开发团队</div>
+                                <div class="team-role">E# 语言设计与实现</div>
+                            </div>
+                            
+                            <div class="team-member">
+                                <div class="team-avatar" aria-hidden="true">🎮</div>
+                                <div class="team-name">游戏开发组</div>
+                                <div class="team-role">LumenCode 项目</div>
+                            </div>
+                            
+                            <div class="team-member">
+                                <div class="team-avatar" aria-hidden="true">⚡</div>
+                                <div class="team-name">基础设施组</div>
+                                <div class="team-role">VortaxV3 服务端</div>
+                            </div>
+                            
+                            <div class="team-member">
+                                <div class="team-avatar" aria-hidden="true">📖</div>
+                                <div class="team-name">文档团队</div>
+                                <div class="team-role">文档编写与维护</div>
+                            </div>
+
+                            <div class="team-member">
+                                <div class="team-avatar" aria-hidden="true">🎨</div>
+                                <div class="team-name">设计团队</div>
+                                <div class="team-role">UI/UX 设计</div>
+                            </div>
+
+                            <div class="team-member">
+                                <div class="team-avatar" aria-hidden="true">🌐</div>
+                                <div class="team-name">社区运营</div>
+                                <div class="team-role">社区管理与支持</div>
+                            </div>
+                        </div>
+
+                        <div class="success-box" style="margin-top: 2rem;">
+                            <strong>加入我们：</strong> 我们一直在寻找有才华的贡献者加入团队。如果您对我们的项目充满热情，并愿意长期投入，欢迎通过 QQ 群或 GitHub 联系我们！
+                        </div>
+
+                        <h4 style="color: #ffffff; margin-top: 2rem; margin-bottom: 1rem; transition: color 0.5s ease;">团队的使命</h4>
+                        <div class="highlight-box">
+                            <ul>
+                                <li><strong>创新驱动</strong> - 探索编程语言和工具的新可能</li>
+                                <li><strong>开源精神</strong> - 分享知识，回馈社区</li>
+                                <li><strong>质量优先</strong> - 不妥协的代码质量和用户体验</li>
+                                <li><strong>社区为本</strong> - 倾听用户，与社区共同成长</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cta" class="section">
+                <div class="card" style="text-align: center; background: rgba(33, 150, 243, 0.1); border: 2px solid rgba(33, 150, 243, 0.3);">
+                    <h3 class="card-title" style="font-size: 2rem;">准备好开始了吗？</h3>
+                    <div class="card-content">
+                        <p style="font-size: 1.1rem; margin-bottom: 2rem;">无论您是想贡献代码、报告问题，还是仅仅想了解更多，我们都欢迎您的参与。</p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <a href="https://github.com/orgs/AetherStudioTeam/repositories" class="cta-button" target="_blank" rel="noopener noreferrer" style="margin-top: 0;" aria-label="浏览项目">
+                                浏览项目
+                            </a>
+                            <a href="../esdocs.html" class="cta-button" style="margin-top: 0;" aria-label="阅读文档">
+                                阅读文档
+                            </a>
+                            <a href="https://qm.qq.com/q/E7joU1opFu" class="cta-button" target="_blank" rel="noopener noreferrer" style="margin-top: 0;" aria-label="加入社区">
+                                加入社区
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>产品</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://lumencode.fan" target="_blank" rel="noopener noreferrer">LumenCode</a></li>
+                        <li><a href="../esdocs.html">E# 编程语言</a></li>
+                        <li><a href="#">VortaxV3</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>资源</h4>
+                    <ul class="footer-links">
+                        <li><a href="../esdocs.html">开发文档</a></li>
+                        <li><a href="https://github.com/orgs/AetherStudioTeam/repositories" target="_blank" rel="noopener noreferrer">开源项目</a></li>
+                        <li><a href="community.html">社区</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>团队</h4>
+                    <ul class="footer-links">
+                        <li><a href="../index.html#about">关于我们</a></li>
+                        <li><a href="https://qm.qq.com/q/E7joU1opFu" target="_blank" rel="noopener noreferrer">加入我们</a></li>
+                        <li><a href="#team">团队介绍</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>社区</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/orgs/AetherStudioTeam/" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                        <li><a href="https://qm.qq.com/q/E7joU1opFu" target="_blank" rel="noopener noreferrer">QQ 群</a></li>
+                        <li><a href="#reporting">问题报告</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-text">© 2023-2025 <span class="footer-brand">AetherStudio</span>. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    isScrolled: false,
+                    isDark: true,
+                    isRotating: false
+                }
+            },
+            mounted() {
+                window.addEventListener('scroll', this.handleScroll);
+                this.initTheme();
+                this.initParticles();
+            },
+            beforeUnmount() {
+                window.removeEventListener('scroll', this.handleScroll);
+            },
+            methods: {
+                handleScroll() {
+                    this.isScrolled = window.scrollY > 50;
+                },
+                initParticles() {
+                    const particles = document.querySelectorAll('.particle');
+                    particles.forEach(particle => {
+                        const size = Math.random() * 3 + 1;
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+                        particle.style.opacity = Math.random() * 0.3 + 0.1;
+                    });
+                },
+                initTheme() {
+                    const savedTheme = localStorage.getItem('theme');
+                    if (savedTheme) {
+                        this.isDark = savedTheme === 'dark';
+                    } else {
+                        this.isDark = !window.matchMedia('(prefers-color-scheme: light)').matches;
+                    }
+                    this.applyTheme();
+                },
+                toggleTheme() {
+                    this.isRotating = true;
+                    setTimeout(() => {
+                        this.isDark = !this.isDark;
+                        this.applyTheme();
+                        localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+                    }, 300);
+                    setTimeout(() => {
+                        this.isRotating = false;
+                    }, 600);
+                },
+                applyTheme() {
+                    if (this.isDark) {
+                        document.body.classList.remove('light-theme');
+                    } else {
+                        document.body.classList.add('light-theme');
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
