@@ -1,0 +1,12 @@
+# OS and editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Dependency directories
+node_modules/
+
+# Logs and temporary files
+*.log
+*.tmp
