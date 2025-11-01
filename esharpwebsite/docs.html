@@ -1,1299 +1,228 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>E# 2.0 Documentation Hub</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg-surface: #0b1120;
-      --bg-elevated: rgba(15, 23, 42, 0.9);
-      --bg-panel: rgba(15, 23, 42, 0.96);
-      --border-subtle: rgba(148, 163, 184, 0.14);
-      --accent: #38bdf8;
-      --accent-strong: #2563eb;
-      --accent-soft: rgba(56, 189, 248, 0.18);
-      --text-primary: #f8fafc;
-      --text-secondary: #cbd5f5;
-      --text-muted: #94a3b8;
-      --shadow-elevated: 0 24px 64px rgba(15, 23, 42, 0.45);
-      --shadow-active: 0 18px 36px rgba(56, 189, 248, 0.28);
-      --radius-large: 28px;
-      --radius-medium: 20px;
-      --radius-small: 12px;
-      --transition-default: 0.28s cubic-bezier(0.21, 0.45, 0.15, 0.95);
-    }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Inter", "Segoe UI", "SF Pro Display", system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.14), transparent 55%),
-        radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.12), transparent 50%),
-        var(--bg-surface);
-      color: var(--text-primary);
-      line-height: 1.65;
-      letter-spacing: 0.01em;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    a:hover,
-    a:focus-visible {
-      color: #7dd3fc;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0 0 0 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .skip-link {
-      position: absolute;
-      left: -999px;
-      top: 0;
-      padding: 12px 18px;
-      background: var(--accent-strong);
-      color: white;
-      border-radius: var(--radius-small);
-      z-index: 1000;
-      transition: left var(--transition-default);
-    }
-
-    .skip-link:focus {
-      left: 24px;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 320px minmax(0, 1fr);
-      min-height: 100vh;
-    }
-
-    .sidebar-toggle {
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      z-index: 60;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      width: 52px;
-      height: 52px;
-      background: rgba(15, 23, 42, 0.82);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      color: var(--text-primary);
-      backdrop-filter: blur(16px);
-      cursor: pointer;
-      transition: transform var(--transition-default), box-shadow var(--transition-default);
-    }
-
-    .sidebar-toggle:hover,
-    .sidebar-toggle:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-active);
-    }
-
-    .sidebar-toggle svg {
-      width: 24px;
-      height: 24px;
-    }
-
-    .sidebar-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(8, 11, 19, 0.55);
-      backdrop-filter: blur(4px);
-      z-index: 40;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity var(--transition-default);
-    }
-
-    .sidebar-overlay.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 0;
-      align-self: flex-start;
-      height: 100vh;
-      padding: 32px 28px;
-      border-right: 1px solid var(--border-subtle);
-      background: var(--bg-panel);
-      backdrop-filter: blur(14px);
-      box-shadow: inset -1px 0 0 rgba(148, 163, 184, 0.08);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .sidebar::-webkit-scrollbar {
-      width: 7px;
-    }
-
-    .sidebar::-webkit-scrollbar-thumb {
-      background: rgba(100, 116, 139, 0.35);
-      border-radius: 100px;
-    }
-
-    .sidebar-header {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-    }
-
-    .sidebar-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-
-    .sidebar-subtitle {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
-
-    .search-field {
-      position: relative;
-    }
-
-    .search-field input[type="search"] {
-      width: 100%;
-      padding: 12px 14px 12px 42px;
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      background: rgba(9, 13, 23, 0.65);
-      color: var(--text-primary);
-      font-size: 0.96rem;
-      transition: border-color var(--transition-default), box-shadow var(--transition-default);
-    }
-
-    .search-field input[type="search"]::placeholder {
-      color: rgba(148, 163, 184, 0.6);
-    }
-
-    .search-field input[type="search"]:focus {
-      outline: none;
-      border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
-    }
-
-    .search-field svg {
-      position: absolute;
-      top: 50%;
-      left: 14px;
-      width: 18px;
-      height: 18px;
-      color: rgba(148, 163, 184, 0.6);
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-
-    .search-note {
-      margin-top: 8px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-    }
-
-    .search-status {
-      margin-top: 14px;
-      font-size: 0.85rem;
-      color: #f97316;
-      display: none;
-    }
-
-    .search-status.show {
-      display: block;
-    }
-
-    .nav-group + .nav-group {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(148, 163, 184, 0.12);
-    }
-
-    .nav-group.no-results {
-      opacity: 0.38;
-      pointer-events: none;
-    }
-
-    .nav-heading {
-      margin: 0 0 12px;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: rgba(148, 163, 184, 0.78);
-    }
-
-    .nav-items {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .nav-link {
-      width: 100%;
-      text-align: left;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-      font-weight: 500;
-      padding: 10px 14px;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: background var(--transition-default), border-color var(--transition-default), color var(--transition-default), transform var(--transition-default);
-    }
-
-    .nav-link:hover,
-    .nav-link:focus-visible {
-      outline: none;
-      color: var(--text-primary);
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.35);
-      transform: translateX(4px);
-    }
-
-    .nav-link.active {
-      background: rgba(37, 99, 235, 0.35);
-      color: var(--text-primary);
-      border-color: rgba(96, 165, 250, 0.65);
-      box-shadow: var(--shadow-active);
-    }
-
-    .nav-link.search-match {
-      border-color: rgba(56, 189, 248, 0.6);
-      color: #e0f2fe;
-    }
-
-    .nav-link[hidden] {
-      display: none;
-    }
-
-    main {
-      position: relative;
-      padding: 56px clamp(18px, 6vw, 72px) 96px;
-    }
-
-    .hero {
-      max-width: 920px;
-      margin: 0 auto 64px;
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(14, 165, 233, 0.18));
-      padding: 42px clamp(20px, 6vw, 48px);
-      border-radius: var(--radius-large);
-      border: 1px solid rgba(96, 165, 250, 0.32);
-      box-shadow: var(--shadow-elevated);
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(22px);
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: 16px;
-      border-radius: calc(var(--radius-large) - 12px);
-      border: 1px solid rgba(148, 197, 255, 0.15);
-      pointer-events: none;
-    }
-
-    .hero h1 {
-      margin: 0 0 18px;
-      font-size: clamp(2.5rem, 4vw, 3.4rem);
-      letter-spacing: -0.02em;
-    }
-
-    .hero p {
-      margin: 0;
-      font-size: clamp(1rem, 1.2vw + 0.6rem, 1.18rem);
-      color: rgba(226, 232, 240, 0.92);
-      max-width: 720px;
-    }
-
-    .chip-list {
-      margin-top: 28px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .chip {
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      letter-spacing: 0.04em;
-      background: rgba(15, 23, 42, 0.35);
-      border: 1px solid rgba(56, 189, 248, 0.5);
-      color: #e0f2fe;
-    }
-
-    .doc-section {
-      max-width: 920px;
-      margin: 0 auto 52px;
-      background: rgba(15, 23, 42, 0.82);
-      padding: clamp(28px, 5vw, 44px);
-      border-radius: var(--radius-large);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      box-shadow: var(--shadow-elevated);
-      position: relative;
-      transition: transform var(--transition-default), box-shadow var(--transition-default), border-color var(--transition-default);
-    }
-
-    .doc-section::before {
-      content: "";
-      position: absolute;
-      top: 18px;
-      left: 22px;
-      right: 22px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.6), transparent);
-      opacity: 0.35;
-    }
-
-    .doc-section:hover {
-      transform: translateY(-6px);
-      border-color: rgba(96, 165, 250, 0.35);
-      box-shadow: 0 24px 48px rgba(15, 23, 42, 0.5);
-    }
-
-    .doc-section h2 {
-      margin-top: 0;
-      font-size: clamp(2rem, 2.6vw, 2.4rem);
-      letter-spacing: -0.015em;
-    }
-
-    .doc-section h3 {
-      margin-top: 26px;
-      margin-bottom: 12px;
-      font-size: 1.2rem;
-      color: #bae6fd;
-      letter-spacing: -0.01em;
-    }
-
-    .doc-section p {
-      color: rgba(226, 232, 240, 0.88);
-      margin: 12px 0;
-    }
-
-    .doc-section ul,
-    .doc-section ol {
-      margin: 16px 0 16px 22px;
-      color: rgba(226, 232, 240, 0.9);
-    }
-
-    .doc-section li + li {
-      margin-top: 10px;
-    }
-
-    .doc-section table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 24px 0;
-      background: rgba(9, 13, 23, 0.82);
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-    }
-
-    .doc-section th,
-    .doc-section td {
-      padding: 14px 18px;
-      text-align: left;
-      color: rgba(226, 232, 240, 0.92);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
-      font-size: 0.95rem;
-    }
-
-    .doc-section thead {
-      background: rgba(37, 99, 235, 0.28);
-    }
-
-    .doc-section pre {
-      border-radius: 18px;
-      border: 1px solid rgba(56, 189, 248, 0.18);
-      background: rgba(9, 13, 23, 0.78);
-      padding: 18px 18px 20px;
-      font-size: 0.92rem;
-      overflow-x: auto;
-    }
-
-    .doc-section code {
-      font-family: "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace;
-    }
-
-    .doc-section .callout {
-      margin: 24px 0;
-      padding: 18px 20px;
-      border-radius: var(--radius-medium);
-      border: 1px solid rgba(96, 165, 250, 0.25);
-      background: rgba(56, 189, 248, 0.12);
-      color: rgba(226, 232, 240, 0.9);
-    }
-
-    .doc-section .callout strong {
-      color: #e0f2fe;
-    }
-
-    .doc-section .callout.warning {
-      border-color: rgba(251, 191, 36, 0.35);
-      background: rgba(251, 191, 36, 0.12);
-      color: #fef3c7;
-    }
-
-    .doc-section .grid-split {
-      display: grid;
-      gap: 18px;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      margin-top: 18px;
-    }
-
-    .doc-section .stat-card {
-      padding: 18px;
-      border-radius: 16px;
-      background: rgba(9, 13, 23, 0.78);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-    }
-
-    .doc-section .stat-card h4 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-      color: #bae6fd;
-    }
-
-    .doc-section .stat-card p {
-      margin: 0;
-      font-size: 0.92rem;
-      color: rgba(226, 232, 240, 0.76);
-    }
-
-    .doc-section.search-match {
-      border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 0 24px 48px rgba(56, 189, 248, 0.22);
-    }
-
-    .doc-section.dimmed {
-      opacity: 0.35;
-      filter: saturate(0.6);
-    }
-
-    footer {
-      max-width: 920px;
-      margin: 64px auto 0;
-      padding: 28px clamp(18px, 4vw, 30px);
-      border-radius: var(--radius-large);
-      border: 1px solid rgba(148, 163, 184, 0.16);
-      background: rgba(15, 23, 42, 0.65);
-      text-align: center;
-      color: rgba(148, 163, 184, 0.8);
-      font-size: 0.92rem;
-    }
-
-    @media (max-width: 1200px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        position: fixed;
-        inset: 0 auto 0 0;
-        width: min(84vw, 340px);
-        transform: translateX(-105%);
-        z-index: 50;
-        height: 100%;
-        max-height: none;
-        border-right: 1px solid rgba(148, 163, 184, 0.2);
-        border-radius: 0;
-        transition: transform var(--transition-default), box-shadow var(--transition-default);
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-        box-shadow: 26px 0 60px rgba(15, 23, 42, 0.5);
-      }
-
-      .sidebar-toggle {
-        display: flex;
-      }
-
-      main {
-        padding-top: 104px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .hero,
-      .doc-section,
-      footer {
-        border-radius: 24px;
-        padding: 26px 22px;
-      }
-
-      .hero::after {
-        inset: 10px;
-        border-radius: 18px;
-      }
-
-      .chip-list {
-        gap: 8px;
-      }
-
-      .nav-link {
-        font-size: 0.92rem;
-        padding: 10px 12px;
-      }
-
-      .doc-section table {
-        display: block;
-        overflow-x: auto;
-        border-radius: 18px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.001ms !important;
-        scroll-behavior: auto !important;
-      }
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="E# documentation hub containing language guides, API references, and architectural blueprints for distributed systems.">
+  <title>E# Documentation · Language guides, API reference, and design blueprints</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <a class="skip-link" href="#content">Skip to main content</a>
-  <button id="sidebarToggle" class="sidebar-toggle" type="button" aria-label="Toggle documentation navigation" aria-expanded="false">
-    <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"></path>
-    </svg>
-  </button>
-  <div id="sidebarOverlay" class="sidebar-overlay" role="presentation"></div>
-  <div class="layout">
-    <aside class="sidebar" aria-label="Documentation navigation">
-      <header class="sidebar-header">
-        <div class="sidebar-title">E# 2.0 Documentation</div>
-        <p class="sidebar-subtitle">Language fundamentals, safety guarantees, and advanced capabilities at a glance.</p>
-        <div class="search-field">
-          <label class="sr-only" for="searchInput">Search documentation</label>
-          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-3.65a6 6 0 1 0-12 0 6 6 0 0 0 12 0z"></path>
-          </svg>
-          <input id="searchInput" type="search" placeholder="Search sections or keywords…" autocomplete="off" aria-describedby="searchHelp" />
-        </div>
-        <p id="searchHelp" class="search-note">Type to filter navigation and highlight matching sections.</p>
-        <div id="searchStatus" class="search-status" role="status" aria-live="polite"></div>
-      </header>
+<body data-page="docs">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo">
+          <img src="assets/logo.svg" alt="E# logo">
+        </span>
+        <span>E# Platform</span>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="primary-navigation" aria-label="Toggle navigation">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 5H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M3 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M3 15H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span aria-hidden="true">Menu</span>
+      </button>
+      <nav class="site-nav" id="primary-navigation" data-nav aria-label="Primary navigation">
+        <a href="index.html" data-nav-link data-target="index">Overview</a>
+        <a href="docs.html" data-nav-link data-target="docs">Documentation</a>
+        <a href="download.html" data-nav-link data-target="download">Download</a>
+        <a href="community.html" data-nav-link data-target="community">Community</a>
+        <a class="primary-action" href="../index.html">AetherStudio Home</a>
+      </nav>
+    </div>
+  </header>
 
-      <div class="nav-group" data-group>
-        <p class="nav-heading">Foundations</p>
-        <ul class="nav-items">
-          <li data-nav-item><button class="nav-link" data-target="overview" type="button">Overview</button></li>
-          <li data-nav-item><button class="nav-link" data-target="program-structure" type="button">Program Structure</button></li>
-          <li data-nav-item><button class="nav-link" data-target="data-types" type="button">Data Types</button></li>
-          <li data-nav-item><button class="nav-link" data-target="functions" type="button">Functions</button></li>
-          <li data-nav-item><button class="nav-link" data-target="control-flow" type="button">Control Flow</button></li>
-          <li data-nav-item><button class="nav-link" data-target="static-members" type="button">Static Members</button></li>
-        </ul>
-      </div>
-
-      <div class="nav-group" data-group>
-        <p class="nav-heading">Reliability &amp; Power</p>
-        <ul class="nav-items">
-          <li data-nav-item><button class="nav-link" data-target="memory-safety" type="button">Memory Safety</button></li>
-          <li data-nav-item><button class="nav-link" data-target="advanced-features" type="button">Advanced Features</button></li>
-          <li data-nav-item><button class="nav-link" data-target="standard-library" type="button">Standard Library</button></li>
-        </ul>
-      </div>
-    </aside>
-
-    <main id="content" tabindex="-1">
-      <section class="hero" aria-labelledby="page-title">
-        <h1 id="page-title">E# 2.0 Documentation Hub</h1>
-        <p>E# blends the expressiveness of modern managed languages with the determinism of handcrafted systems code. Use this hub to explore the language surface, learn how the runtime keeps code safe, and discover advanced capabilities that ship with the 2.0 release.</p>
-        <div class="chip-list" aria-label="Key highlights">
-          <span class="chip">Hybrid high &amp; low level workflow</span>
-          <span class="chip">Deterministic memory tools</span>
-          <span class="chip">Inline assembly with safety rails</span>
-          <span class="chip">Modern concurrency model</span>
-        </div>
-      </section>
-
-      <section class="doc-section" id="overview" data-title="Overview">
-        <h2>Overview</h2>
-        <p>E# 2.0 is a compiled systems language that keeps the ergonomics of C# while unlocking explicit memory control, inline assembly, and deterministic performance. The toolchain emits highly-optimized native code for Linux and Windows, with experimental support for ARM64.</p>
-        <div class="callout"><strong>Design goals:</strong> predictable performance, memory safety without sacrificing low-level access, and familiar syntax for developers coming from C-style languages.</div>
-        <div class="grid-split">
-          <div class="stat-card">
-            <h4>Dual-mode development</h4>
-            <p>Build in <strong>managed mode</strong> (classes, generics, GC assists) or drop into <strong>systems mode</strong> (sections, inline assembly, manual layout) as needed.</p>
+  <main>
+    <div class="container">
+      <section class="section hero">
+        <div class="hero-copy">
+          <span class="badge">Docs Hub</span>
+          <h1>Master the E# language, runtime, and ecosystem.</h1>
+          <p class="lead">Whether you are onboarding a new team or refining a production cluster, our documentation library aggregates conceptual overviews, API references, migration guides, and observability playbooks.</p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#getting-started">Get started</a>
+            <a class="secondary-action" href="#runtime-insights">Explore runtime insights</a>
           </div>
-          <div class="stat-card">
-            <h4>Safety by default</h4>
-            <p>Compile-time flow analysis, ownership-aware pointers, and runtime guards eliminate undefined behaviour without runtime pauses.</p>
-          </div>
-          <div class="stat-card">
-            <h4>Native interop</h4>
-            <p>Call into C/C++ exports or expose E# routines with ABI-stable signatures. Inline assembly enables ultra-low overhead system calls.</p>
+          <div class="tag-grid">
+            <span class="tag">Language tour</span>
+            <span class="tag">Async orchestration</span>
+            <span class="tag">Contracts</span>
+            <span class="tag">Toolchain</span>
           </div>
         </div>
-        <h3>Hello, world variants</h3>
-        <div class="grid-split">
-          <pre><code class="language-csharp">namespace HelloWorld;
-
-class Program
+        <div class="hero-preview">
+          <div class="hero-signal" aria-hidden="true"></div>
+          <h3>Lifecycle hooks</h3>
+          <p>Lifecycle events ensure deterministic startup and teardown across services. Hooks run in dependency order and expose metrics automatically.</p>
+          <div class="code-card">
+            <header>
+              <span>services/ingestor.es</span>
+              <span>Lifecycle hooks</span>
+            </header>
+            <pre><code class="language-csharp">service Ingestor
 {
-    static void Main()
+    requires broker: MessageBroker;
+    config batchSize: Int = 512;
+
+    on configure => broker.Connect("telemetry");
+
+    on ready async =>
     {
-        Console.WriteLine("Hello from E# 2.0!");
-    }
-}</code></pre>
-          <pre><code class="language-esharp">section .data
-    message: db "Hello from E# systems mode", 0x0A
-    length:  equ $ - message
-
-section .text
-    global _start
-
-function void _start() asm {
-    mov     rax, 1      ; sys_write
-    mov     rdi, 1      ; stdout handle
-    mov     rsi, message
-    mov     rdx, length
-    syscall
-
-    mov     rax, 60     ; sys_exit
-    xor     rdi, rdi
-    syscall
-}</code></pre>
-        </div>
-      </section>
-
-      <section class="doc-section" id="program-structure" data-title="Program Structure">
-        <h2>Program Structure</h2>
-        <p>E# source files support both namespace-oriented organization and segment-based structure for low-level entry points. Build pipelines treat <code>.esh</code> files exactly like C# files, but allow additional directives tailored for systems programming.</p>
-        <h3>Managed layout</h3>
-        <pre><code class="language-esharp">namespace Diagnostics.Tracing;
-
-using System.Console;
-
-class EventSource
-{
-    private readonly string _name;
-
-    public EventSource(string name)
-    {
-        _name = name;
+        await broker.Stream("telemetry", handle);
     }
 
-    public void Emit(string message)
+    fn handle(packet: Packet) async
     {
-        Console.WriteLine($"[{_name}] {message}");
+        await pipeline.Forward(packet)
+             .onError(|err| log.error(err, scope: "ingestor"));
     }
-}
-
-class Program
-{
-    static void Main()
-    {
-        var source = new EventSource("startup");
-        source.Emit("Bootstrapping pipeline");
-    }
-}</code></pre>
-        <h3>Systems layout</h3>
-        <p>Sections map directly to linker segments. Use them to describe data, bss, and text regions when building freestanding binaries or kernels.</p>
-        <pre><code class="language-esharp">section .data
-    ready_flag:    dd 1
-
-section .bss
-    io_buffer:     resb 4096
-
-section .text
-    global kernel_main
-
-function void kernel_main() asm {
-    mov     rsi, io_buffer
-    ; hardware bring-up...
-}</code></pre>
-        <div class="callout warning"><strong>Tip:</strong> When combining managed and systems units, mark the assembly entry point with <code>[EntryPoint]</code> or export a symbol with <code>global</code>. The build toolchain resolves the correct startup path automatically.</div>
-        <h3>Project manifest</h3>
-        <ul>
-          <li><strong><code>eshproj.json</code></strong> – declares compilation mode, target triple, and safety level.</li>
-          <li><strong><code>src/</code></strong> – managed modules; compiled with borrow-checking and GC assists enabled.</li>
-          <li><strong><code>systems/</code></strong> – low-level components compiled with inline assembly available everywhere.</li>
-        </ul>
-      </section>
-
-      <section class="doc-section" id="data-types" data-title="Data Types">
-        <h2>Data Types</h2>
-        <p>E# keeps familiar primitive categories while extending the type system with ownership semantics and fixed-width aliases. All primitives have deterministic size across platforms.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Type</th>
-              <th>Width</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td rowspan="4">Signed integers</td>
-              <td><code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code></td>
-              <td>1–8 bytes</td>
-              <td>Two's complement, implicit promotion follows C# rules.</td>
-            </tr>
-            <tr>
-              <td>Unsigned integers</td>
-              <td>1–8 bytes</td>
-              <td><code>u8</code> maps to byte, <code>u64</code> for address math.</td>
-            </tr>
-            <tr>
-              <td>Floating point</td>
-              <td>4 / 8 bytes</td>
-              <td><code>f32</code>, <code>f64</code> with IEEE 754 semantics.</td>
-            </tr>
-            <tr>
-              <td>Boolean</td>
-              <td>1 byte</td>
-              <td>Normalized to <code>true</code>/<code>false</code>; Avoid direct pointer casts.</td>
-            </tr>
-            <tr>
-              <td>Text</td>
-              <td><code>string</code>, <code>rope</code>, <code>span&lt;char&gt;</code></td>
-              <td>UTF-16 default</td>
-              <td>Use ropes for very large or streaming text.</td>
-            </tr>
-            <tr>
-              <td>Pointers</td>
-              <td><code>ptr&lt;T&gt;</code>, <code>unique&lt;T&gt;</code>, <code>shared&lt;T&gt;</code></td>
-              <td>Architecture width</td>
-              <td>Ownership encoded in the pointer type, enforced at compile time.</td>
-            </tr>
-          </tbody>
-        </table>
-        <h3>Declaring values</h3>
-        <pre><code class="language-esharp">// Numeric literals
-let temperature: f64 = -273.15;
-let colorMask: u32 = 0xFF00_FF00;
-let flags: bitset&lt;CompressionFlags&gt; = .Fast | .Deterministic;
-
-// Text and binary
-let greeting: string = "Hello, systems world";
-let utf8: span&lt;u8&gt; = span.from_utf8("⚡️");
-
-// Ownership-aware pointers
-let payload: unique&lt;Message&gt; = new Message();
-let sharedCache: shared&lt;Cache&gt; = Cache.Open();
-
-// Deterministic aggregates
-struct PacketHeader
-{
-    u16 version;
-    u16 opcode;
-    u32 payloadLength;
-}
-
-PacketHeader header = PacketHeader(version: 2, opcode: 0x10, payloadLength: payload->Length());</code></pre>
-        <div class="callout"><strong>Nullable flow:</strong> annotate optional references with <code>T?</code>. The compiler requires null checks unless you assert non-null using the postfix <code>!</code> operator.</div>
-      </section>
-
-      <section class="doc-section" id="functions" data-title="Functions">
-        <h2>Functions</h2>
-        <p>E# 2.0 keeps C#-style method declarations and adds freestanding <code>function</code> blocks for systems code. Overloads, generics, and attributes mirror the managed ecosystem, while inline assembly bridges to hardware.</p>
-        <h3>Managed functions</h3>
-        <pre><code class="language-esharp">class MathUtilities
-{
-    public static double Clamp(double value, double min, double max)
-        => value &lt; min ? min : value &gt; max ? max : value;
-
-    public static T Max&lt;T&gt;(T left, T right) where T : IComparable&lt;T&gt;
-        => left.CompareTo(right) &gt;= 0 ? left : right;
-}
-
-readonly struct Temperature
-{
-    public Temperature(double celsius) => Celsius = celsius;
-    public double Celsius { get; }
-
-    public double ToFahrenheit()
-        => (Celsius * 9.0 / 5.0) + 32.0;
-}</code></pre>
-        <h3>Freestanding and inline assembly</h3>
-        <pre><code class="language-esharp">function u64 monotonic_ticks() asm {
-    rdtsc
-    shl     rdx, 32
-    or      rax, rdx
-    ret
-}
-
-[Inline]
-function u32 rotate_left(u32 value, u32 count)
-{
-    return (value &lt;&lt; count) | (value &gt;&gt; (32 - count));
-}</code></pre>
-        <h3>Lambdas &amp; closures</h3>
-        <pre><code class="language-esharp">var items = new List&lt;string&gt; { "scheduler", "allocator", "monitor" };
-var filtered = items
-    .Where(static item => item.Contains('o'))
-    .Select((item, index) => $"{index}: {item}")
-    .ToArray();
-
-Span&lt;u8&gt; buffer = stackalloc u8[256];
-var writer = (Span&lt;u8&gt; destination, ReadOnlySpan&lt;u8&gt; source) =>
-{
-    source.CopyTo(destination);
-    return source.Length;
-};
-writer(buffer, utf8Bytes);</code></pre>
-        <div class="callout"><strong>Attributes:</strong> decorate methods with <code>[NoMangle]</code>, <code>[Inline]</code>, or <code>[Syscall(number)]</code> to control codegen. Attributes are preserved across P/Invoke boundaries.</div>
-      </section>
-
-      <section class="doc-section" id="control-flow" data-title="Control Flow">
-        <h2>Control Flow</h2>
-        <p>Conditionals and loops mirror C#, but E# 2.0 introduces pattern-based <code>match</code> expressions, compile-time guards, and defer blocks for deterministic cleanup.</p>
-        <h3>Branching</h3>
-        <pre><code class="language-esharp">if (featureToggle.IsEnabled("fast-path"))
-{
-    RunCriticalPath();
-}
-else if (Diagnostics.IsVerbose)
-{
-    Console.WriteLine("Using standard pipeline");
-}
-else
-{
-    Fallback();
-}
-
-match request.Kind
-{
-    PacketKind.Handshake =&gt; AcceptHandshake(request),
-    PacketKind.Payload when request.Size &lt;= limits.MaxPayload =&gt; ProcessPayload(request),
-    _ =&gt; Reject(request)
-};</code></pre>
-        <h3>Iteration</h3>
-        <pre><code class="language-esharp">for (u32 i = 0; i &lt; timeline.Length; i++)
-{
-    timeline[i].Execute();
-}
-
-while (queue.TryDequeue(out var job))
-{
-    job();
-}
-
-defer Console.WriteLine("Metrics flushed");
-
-foreach (var shard in shards)
-{
-    using var lease = shard.Acquire();
-    await lease.RunAsync(token);
-}</code></pre>
-        <div class="callout warning"><strong>Deferred cleanup:</strong> <code>defer</code> blocks run when the current scope exits, even during exceptions, making it ideal for releasing handles within systems code.</div>
-      </section>
-
-      <section class="doc-section" id="static-members" data-title="Static Members">
-        <h2>Static Members</h2>
-        <p>Static classes and members enable singleton-style services without allocating objects. E# aligns with C# semantics but augments them with initialization guards and deterministic shutdown hooks.</p>
-        <h3>Static classes</h3>
-        <pre><code class="language-esharp">static class RuntimeClock
-{
-    private static readonly u64 BaselineTicks = monotonic_ticks();
-
-    public static TimeSpan SinceStart()
-        => TimeSpan.FromTicks(monotonic_ticks() - BaselineTicks);
-
-    [Shutdown]
-    private static void Teardown()
-        => Console.WriteLine("Runtime clock disposed");
-}</code></pre>
-        <h3>Static fields and thread safety</h3>
-        <pre><code class="language-esharp">class DiagnosticsHub
-{
-    private static readonly Lazy&lt;DiagnosticsHub&gt; _instance = new(Create);
-    private readonly ConcurrentQueue&lt;string&gt; _buffer = new();
-
-    private DiagnosticsHub() { }
-
-    public static DiagnosticsHub Instance =&gt; _instance.Value;
-
-    public void Publish(string message)
-        => _buffer.Enqueue($"[{RuntimeClock.SinceStart()}] {message}");
-}</code></pre>
-        <div class="callout"><strong>Static initializers:</strong> Use the <code>[Startup]</code> attribute to run eager initialization code after the runtime is ready. Pair it with <code>[Shutdown]</code> to release resources deterministically.</div>
-      </section>
-
-      <section class="doc-section" id="memory-safety" data-title="Memory Safety">
-        <h2>Memory Safety</h2>
-        <p>Safety is enforced at three layers: borrow checking, runtime guards, and optional garbage collection assists. You can choose the right balance per module.</p>
-        <h3>Ownership &amp; borrowing</h3>
-        <pre><code class="language-esharp">function void process(unique&lt;Packet&gt; packet)
-{
-    using view = packet.View(); // scoped borrow
-    checksum::Verify(view.Span);
-
-    Span&lt;u8&gt; payload = view.MutableSpan();
-    payload[0] = OpCodes.Acknowledge;
 }
 </code></pre>
-        <div class="callout"><strong>Borrow rules:</strong> A unique pointer guarantees exclusive access. Convert to <code>shared&lt;T&gt;</code> or <code>weak&lt;T&gt;</code> for multi-owner scenarios; the compiler prevents double frees.</div>
-        <h3>Runtime guards</h3>
-        <ul>
-          <li><strong>Bounds checks:</strong> Enabled by default for arrays, spans, and safe collections. Use <code>unchecked</code> contexts to elide the guard when profiling indicates it is safe.</li>
-          <li><strong>Null safety:</strong> Nullable references (<code>T?</code>) require explicit guard patterns. The compiler inserts <code>NullReferenceException</code> barriers otherwise.</li>
-          <li><strong>Use-after-free detection:</strong> Ownership metadata is tracked for debug builds; release builds fold it to zero-cost asserts.</li>
-        </ul>
-        <h3>Deterministic allocation</h3>
-        <pre><code class="language-esharp">MemoryPool pool = MemoryPool.Create(capacity: 4 * 1024 * 1024);
-
-auto buffer = pool.Rent(SpanSize.FromKilobytes(64));
-try
-{
-    Process(buffer.Span);
-}
-finally
-{
-    buffer.Dispose();
-}
-
-using arena = stackalloc ArenaStack(1024);
-var writer = new BinaryWriter(arena);
-writer.Write(u16(0xCAFE));
-writer.Write(DateTime.UtcNow);
-</code></pre>
+          </div>
+        </div>
       </section>
 
-      <section class="doc-section" id="advanced-features" data-title="Advanced Features">
-        <h2>Advanced Features</h2>
-        <p>Beyond the core syntax, E# 2.0 ships with advanced tooling for generics, asynchronous pipelines, and inline assembly. Mix and match to fit high-performance workloads.</p>
-        <h3>Generic constraints &amp; concepts</h3>
-        <pre><code class="language-esharp">concept Hashable&lt;T&gt;
-{
-    static u64 GetHashCode(in T value);
-}
-
-static u64 HashAggregate&lt;T&gt;(ReadOnlySpan&lt;T&gt; items)
-    where T : Hashable&lt;T&gt;
-{
-    u64 hash = 1469598103934665603;
-    foreach (ref readonly var item in items)
-    {
-        hash ^= T.GetHashCode(item);
-        hash *= 1099511628211;
-    }
-    return hash;
-}</code></pre>
-        <h3>Asynchronous pipelines</h3>
-        <pre><code class="language-esharp">async Task&lt;Payload&gt; FetchAndDecodeAsync(Uri endpoint, CancellationToken token)
-{
-    using var lease = await HttpLease.AcquireAsync(endpoint, token);
-    var stream = await lease.ReadAsync(token);
-    return await Payload.DecodeAsync(stream, token);
-}
-
-await foreach (var frame in StreamReader.ReadFramesAsync(token))
-{
-    Process(frame);
-}</code></pre>
-        <h3>Inline assembly helpers</h3>
-        <pre><code class="language-esharp">function void enable_interrupts() asm { sti }
-function void disable_interrupts() asm { cli }
-
-function u64 rdmsr(u32 address) asm {
-    mov ecx, [address]
-    rdmsr
-    shl rdx, 32
-    or  rax, rdx
-    ret
-}</code></pre>
-        <div class="callout"><strong>Interop:</strong> Annotate functions with <code>[DllImport]</code> or <code>[Export("name")]</code> to cross language boundaries. The tooling emits headers for C consumers automatically.</div>
+      <section class="section" id="getting-started">
+        <h2 class="section-title">Getting started</h2>
+        <p class="section-subtitle">Begin with the essentials: install the toolchain, create your first service, and learn how compilation targets map across different environments.</p>
+        <div class="grid cols-2">
+          <article class="card">
+            <h3>Foundation track</h3>
+            <p>Walk through syntax basics, ownership semantics, and module structure. Perfect for developers with C#, Rust, or Kotlin experience.</p>
+            <ul class="feature-list">
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>Language tour</div>
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>Modules &amp; packages</div>
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>Build profiles</div>
+              </li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Distributed systems track</h3>
+            <p>Spin up actors, channels, and workflows that span machines. Includes service mesh templates, metrics, and zero-downtime deployment strategies.</p>
+            <ul class="feature-list">
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>Actor lifecycles</div>
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>Resilient topology patterns</div>
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>Tracing and SLOs</div>
+              </li>
+            </ul>
+          </article>
+        </div>
       </section>
 
-      <section class="doc-section" id="standard-library" data-title="Standard Library">
-        <h2>Standard Library</h2>
-        <p>The standard library is split into focused modules so you can include only what you need. Managed mode can opt into GC-assisted collections, while systems mode keeps everything deterministic.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Module</th>
-              <th>Highlights</th>
-              <th>Use when…</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>System.Core</code></td>
-              <td>LINQ, option/result types, tuple utilities.</td>
-              <td>You need high-level data shaping without allocations.</td>
-            </tr>
-            <tr>
-              <td><code>System.Diagnostics</code></td>
-              <td>Structured logging, counters, tracing pipelines.</td>
-              <td>Building observable services or runtime tooling.</td>
-            </tr>
-            <tr>
-              <td><code>System.IO</code></td>
-              <td>Span-friendly streams, zero-copy readers, async file IO.</td>
-              <td>Streaming large datasets or interacting with the OS.</td>
-            </tr>
-            <tr>
-              <td><code>System.Memory</code></td>
-              <td>Pools, arenas, scoped allocators, borrow helpers.</td>
-              <td>Implementing high-performance caches or network stacks.</td>
-            </tr>
-            <tr>
-              <td><code>System.Threading</code></td>
-              <td>Work stealing schedulers, channels, cancellation primitives.</td>
-              <td>Authoring reactive systems or parallel workloads.</td>
-            </tr>
-          </tbody>
-        </table>
-        <h3>Standard patterns</h3>
-        <pre><code class="language-esharp">using var trace = ActivitySource.Start("pipeline.dispatch");
-using var lease = MemoryPool.Shared.Rent(SpanSize.FromKilobytes(8));
-
-await foreach (var message in Channel.ConsumeAsync(token))
-{
-    Serializer.Write(message, lease.Span);
-    Transport.Send(lease.Span);
-}</code></pre>
-        <div class="callout"><strong>Minimal footprint:</strong> For embedded targets, reference the <code>System.Core</code>, <code>System.Memory</code>, and <code>System.Threading</code> modules individually to avoid shipping unused binaries.</div>
+      <section class="section" id="runtime-insights">
+        <div class="panel">
+          <h2 class="section-title">Runtime insights</h2>
+          <p class="section-subtitle">Monitor scheduler queues, evaluate contract adherence, and map latency budgets directly from your cluster. Visualizations refresh in near real time while the inspector stays lightweight.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Inspector</th>
+                <th>Purpose</th>
+                <th>Typical usage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>orbit top</td>
+                <td>Snapshot actor throughput and mailbox depth.</td>
+                <td>Pinpoint hotspots across services before scaling out.</td>
+              </tr>
+              <tr>
+                <td>orbit traces</td>
+                <td>Stream distributed traces with contract violations flagged.</td>
+                <td>Debug cascading failures with exported flamegraphs.</td>
+              </tr>
+              <tr>
+                <td>orbit qa</td>
+                <td>Run contract suites and performance gates in isolation.</td>
+                <td>Validate pre-production workloads with synthetic traffic.</td>
+              </tr>
+            </tbody>
+          </table>
+          <blockquote>
+            "We moved our entire ingestion layer to E# in four weeks. Contracts surfaced hidden race conditions and the runtime inspector let us iterate without guesswork."
+            <cite> — NovaOps Platform Team</cite>
+          </blockquote>
+        </div>
       </section>
 
-      <footer>
-        Need more? Browse the language samples, or run <code>esharp doc --open-api</code> to generate local API references.
-      </footer>
-    </main>
-  </div>
+      <section class="section">
+        <h2 class="section-title">Pick your path</h2>
+        <div class="grid cols-3">
+          <article class="card" id="api-reference">
+            <h3>API reference</h3>
+            <p>Discover exhaustive signatures, trait bounds, and examples for the standard library and official packages.</p>
+            <div class="quick-links">
+              <a href="#api-reference">Browse the API surface</a>
+            </div>
+          </article>
+          <article class="card" id="architecture-cookbooks">
+            <h3>Architecture cookbooks</h3>
+            <p>Follow blueprints for pub/sub, multi-tenant SaaS, and edge streaming deployments.</p>
+            <div class="quick-links">
+              <a href="#architecture-cookbooks">Open the playbooks</a>
+            </div>
+          </article>
+          <article class="card" id="migration-guides">
+            <h3>Migration guides</h3>
+            <p>Upgrade between E# compiler releases with confidence and roll back instantly if needed.</p>
+            <div class="quick-links">
+              <a href="#migration-guides">Plan your migration</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-clike.min.js"></script>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="list-inline">
+        <a class="brand" href="index.html">
+          <span class="brand-logo">
+            <img src="assets/logo.svg" alt="E# logo">
+          </span>
+          <span>E# Platform</span>
+        </a>
+        <a href="docs.html">Documentation</a>
+        <a href="download.html">Download</a>
+        <a href="community.html">Community</a>
+        <a href="../index.html">Back to AetherStudio</a>
+      </div>
+      <div class="footer-meta">
+        <span>&copy; <span id="footer-year">2024</span> AetherStudio. All rights reserved.</span>
+        <span>Documentation licensed under CC BY 4.0.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
+  <script src="js/main.js"></script>
   <script>
-    (function configurePrism() {
-      if (!window.Prism) {
-        return;
-      }
-
-      Prism.languages.esharp = Prism.languages.extend('csharp', {
-        'keyword': /\b(namespace|section|global|function|asm|concept|unique|shared|weak|stackalloc|span|readonly|defer|await|async|match|when|concept|entry|module|arena|using|let|auto|inline|EntryPoint|Startup|Shutdown|NoMangle|Syscall|Inline)\b/,
-      });
-
-      Prism.languages.insertBefore('esharp', 'class-name', {
-        'directive': {
-          pattern: /\b(section|global)\b.*$/m,
-          greedy: true,
-          alias: 'property'
-        }
-      });
-
-      Prism.highlightAll();
-    })();
-  </script>
-  <script>
-    (function () {
-      const doc = document;
-      const sidebar = doc.querySelector('.sidebar');
-      const toggle = doc.getElementById('sidebarToggle');
-      const overlay = doc.getElementById('sidebarOverlay');
-      const searchInput = doc.getElementById('searchInput');
-      const searchStatus = doc.getElementById('searchStatus');
-      const navButtons = Array.from(doc.querySelectorAll('.nav-link'));
-      const sections = Array.from(doc.querySelectorAll('.doc-section'));
-      const navGroups = Array.from(doc.querySelectorAll('[data-group]'));
-      const navMap = new Map(navButtons.map((btn) => [btn.dataset.target, btn]));
-
-      sections.forEach((section) => {
-        section.dataset.search = `${section.dataset.title} ${section.textContent}`.toLowerCase();
-      });
-
-      function openSidebar() {
-        sidebar.classList.add('open');
-        overlay.classList.add('show');
-        toggle?.setAttribute('aria-expanded', 'true');
-      }
-
-      function closeSidebar() {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('show');
-        toggle?.setAttribute('aria-expanded', 'false');
-      }
-
-      toggle?.addEventListener('click', () => {
-        const expanded = toggle.getAttribute('aria-expanded') === 'true';
-        if (expanded) {
-          closeSidebar();
-        } else {
-          openSidebar();
-        }
-      });
-
-      overlay?.addEventListener('click', closeSidebar);
-
-      function scrollToSection(id) {
-        const section = doc.getElementById(id);
-        if (!section) return;
-
-        section.setAttribute('tabindex', '-1');
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        section.focus({ preventScroll: true });
-        setTimeout(() => section.removeAttribute('tabindex'), 400);
-      }
-
-      navButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-          const target = button.dataset.target;
-          if (!target) return;
-          closeSidebar();
-          scrollToSection(target);
-        });
-
-        button.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            button.click();
-          }
-        });
-      });
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const id = entry.target.id;
-              navButtons.forEach((btn) => btn.classList.remove('active'));
-              const active = navMap.get(id);
-              active?.classList.add('active');
-            }
-          });
-        },
-        {
-          root: null,
-          threshold: 0.35,
-          rootMargin: '-30% 0px -40% 0px',
-        }
-      );
-
-      sections.forEach((section) => observer.observe(section));
-
-      function resetSearch() {
-        sections.forEach((section) => {
-          section.classList.remove('search-match', 'dimmed');
-        });
-        navButtons.forEach((button) => {
-          button.classList.remove('search-match');
-          const item = button.closest('[data-nav-item]');
-          if (item) item.hidden = false;
-        });
-        navGroups.forEach((group) => group.classList.remove('no-results'));
-        searchStatus?.classList.remove('show');
-        searchStatus.textContent = '';
-      }
-
-      function applySearch(value) {
-        const query = value.trim().toLowerCase();
-        if (!query) {
-          resetSearch();
-          return;
-        }
-
-        let matches = 0;
-        sections.forEach((section) => {
-          const navButton = navMap.get(section.id);
-          const navItem = navButton?.closest('[data-nav-item]');
-          const includes = section.dataset.search?.includes(query);
-
-          if (includes) {
-            matches += 1;
-            section.classList.add('search-match');
-            section.classList.remove('dimmed');
-            navButton?.classList.add('search-match');
-            if (navItem) navItem.hidden = false;
-          } else {
-            section.classList.remove('search-match');
-            section.classList.add('dimmed');
-            navButton?.classList.remove('search-match');
-            if (navItem) navItem.hidden = true;
-          }
-        });
-
-        navGroups.forEach((group) => {
-          const visible = Array.from(group.querySelectorAll('[data-nav-item]')).some((item) => !item.hidden);
-          group.classList.toggle('no-results', !visible);
-        });
-
-        if (matches === 0) {
-          searchStatus?.classList.add('show');
-          searchStatus.textContent = 'No sections matched your query.';
-        } else {
-          searchStatus?.classList.add('show');
-          searchStatus.textContent = `${matches} section${matches === 1 ? '' : 's'} highlighted.`;
-          const firstMatch = sections.find((section) => section.classList.contains('search-match'));
-          if (firstMatch) {
-            firstMatch.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }
-      }
-
-      searchInput?.addEventListener('input', (event) => {
-        const value = event.target.value;
-        applySearch(value);
-      });
-
-      window.addEventListener('keydown', (event) => {
-        if (event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey) {
-          event.preventDefault();
-          searchInput?.focus();
-        } else if (event.key === 'Escape') {
-          if (sidebar.classList.contains('open')) {
-            closeSidebar();
-          }
-          if (searchInput?.value) {
-            searchInput.value = '';
-            resetSearch();
-          }
-        }
-      });
-
-      window.addEventListener('resize', () => {
-        if (window.innerWidth > 1200) {
-          sidebar.classList.remove('open');
-          overlay.classList.remove('show');
-          toggle?.setAttribute('aria-expanded', 'false');
-        }
-      });
-    })();
+    document.getElementById("footer-year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
